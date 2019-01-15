@@ -2,6 +2,7 @@ const express = require("express");
 const helmet = require("helmet");
 const knex = require("knex");
 const knexConfig = require("./knexfile.js");
+const zoosRoutes = require('./zoosRoutes/zoosRoutes');
 
 const server = express();
 
@@ -13,69 +14,71 @@ const db = knex(knexConfig.development);
 
 // endpoints here
 
-server.get("/api/zoos", (req, res) => {
-  db("zoos")
-    .then(zoo => {
-      res.status(200).send(zoo);
-    })
-    .catch(() => res.status(500).send({ error: "Couldn't retrieve data." }));
-});
+server.use('/api/zoos', zoosRoutes)
 
-server.get("/api/zoos/:id", (req, res) => {
-  db("zoos")
-    .where({ id: req.params.id })
-    .then(zoo => {
-      if (zoo.length) {
-        res.status(200).send(zoo);
-      } else {
-        res.status(404).send({ error: "Data not found." });
-      }
-    })
-    .catch(() => res.status(500).send({ error: "Couldn't retrieve data." }));
-});
+// server.get("/api/zoos", (req, res) => {
+//   db("zoos")
+//     .then(zoo => {
+//       res.status(200).send(zoo);
+//     })
+//     .catch(() => res.status(500).send({ error: "Couldn't retrieve data." }));
+// });
 
-server.post("/api/zoos", (req, res) => {
-  db("zoos")
-    .insert(req.body)
-    .then(ids => {
-      db("zoos")
-        .where({ id: ids[0] })
-        .then(zoo => {
-          res.status(201).send(zoo);
-        });
-    })
-    .catch(() => res.status(500).send({ error: "Data couldn't be saved." }));
-});
+// server.get("/api/zoos/:id", (req, res) => {
+//   db("zoos")
+//     .where({ id: req.params.id })
+//     .then(zoo => {
+//       if (zoo.length) {
+//         res.status(200).send(zoo);
+//       } else {
+//         res.status(404).send({ error: "Data not found." });
+//       }
+//     })
+//     .catch(() => res.status(500).send({ error: "Couldn't retrieve data." }));
+// });
 
-server.put("/api/zoos/:id", (req, res) => {
-  const changes = req.body;
+// server.post("/api/zoos", (req, res) => {
+//   db("zoos")
+//     .insert(req.body)
+//     .then(ids => {
+//       db("zoos")
+//         .where({ id: ids[0] })
+//         .then(zoo => {
+//           res.status(201).send(zoo);
+//         });
+//     })
+//     .catch(() => res.status(500).send({ error: "Data couldn't be saved." }));
+// });
 
-  db("zoos")
-    .where({ id: req.params.id })
-    .update(changes)
-    .then(count => {
-      if (count) {
-        res.status(200).send({count});
-      } else {
-        res.status(404).send({ error: "Data not found." });
-      }
-    })
-    .catch(() => res.status(500).send({ error: "Data couldn't be saved." }));
-});
+// server.put("/api/zoos/:id", (req, res) => {
+//   const changes = req.body;
 
-server.delete("/api/zoos/:id", (req, res) => {
-  db("zoos")
-    .where({ id: req.params.id })
-    .del()
-    .then(count => {
-      if (count) {
-        res.status(200).json(count);
-      } else {
-        res.status(404).send({ error: "Data not found." });
-      }
-    })
-    .catch(() => res.status(500).send({ error: "Data couldn't be deleted." }));
-});
+//   db("zoos")
+//     .where({ id: req.params.id })
+//     .update(changes)
+//     .then(count => {
+//       if (count) {
+//         res.status(200).send({count});
+//       } else {
+//         res.status(404).send({ error: "Data not found." });
+//       }
+//     })
+//     .catch(() => res.status(500).send({ error: "Data couldn't be saved." }));
+// });
+
+// server.delete("/api/zoos/:id", (req, res) => {
+//   db("zoos")
+//     .where({ id: req.params.id })
+//     .del()
+//     .then(count => {
+//       if (count) {
+//         res.status(200).json(count);
+//       } else {
+//         res.status(404).send({ error: "Data not found." });
+//       }
+//     })
+//     .catch(() => res.status(500).send({ error: "Data couldn't be deleted." }));
+// });
 
 server.get("/api/bears", (req, res) => {
   db("bears")
